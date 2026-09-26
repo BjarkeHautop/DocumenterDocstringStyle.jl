@@ -22,7 +22,6 @@ function transform_docstring!(ast::Node, ds::Base.Docs.DocStr, binding, theme::D
     isdefined(binding.mod, binding.var) || return false
     f = Base.Docs.resolve(binding)
     f isa Function && !is_excluded(config, binding, f) || return false
-    any(x -> x isa Minimal || x isa NoSchema, ds.text) && return false
     model = build_model(ast, ds, config)
     (model === nothing || isempty(model.sections)) && return false
 
