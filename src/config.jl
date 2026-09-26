@@ -12,7 +12,9 @@ to run the check without Documenter.
   and `Keywords` are added when the documented methods have them.
 - `na_markers::Vector{String}`: a section whose whole body is one of these counts
   as an explicit opt-out.
-- `exclude::Vector{Any}`: bindings or functions to skip.
+- `exclude::Vector{Any}`: bindings or functions to skip entirely, checks and styling alike.
+- `no_check::Vector{Any}`: bindings or functions to skip checks for, while still styling them.
+- `skip_unexported::Bool`: treat every non-exported function as if listed in `no_check`.
 - `ignore::Vector{Symbol}`: rule codes to suppress, e.g. `:DS003`.
 - `strict::Bool`: fail the build on errors (`true`) or only warn (`false`).
 - `theme`: rendering theme, a `Symbol`, TOML path, `ThemeSpec` or `DocstringTheme`.
@@ -37,6 +39,8 @@ Base.@kwdef struct SchemaConfig <: Documenter.Plugin
     required::Vector{String} = ["Returns", "Examples"]
     na_markers::Vector{String} = ["N/A"]
     exclude::Vector{Any} = Any[]
+    no_check::Vector{Any} = Any[]
+    skip_unexported::Bool = false
     ignore::Vector{Symbol} = Symbol[]
     strict::Bool = true
     theme::Any = :labeled

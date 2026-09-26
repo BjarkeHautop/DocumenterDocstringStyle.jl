@@ -67,6 +67,7 @@ end
         conv = DocsBuild.docstring_html(dir, "conv2d")
         @test occursin("line-numbers", conv)   # the example keeps its gutter
         @test !occursin("ds-theme", DocsBuild.docstring_html(dir, "channels"))   # MINIMAL
+        @test occursin("ds-theme-$theme", DocsBuild.docstring_html(dir, "uncheckable"))   # NOCHECK
     end
 end
 

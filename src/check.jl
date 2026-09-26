@@ -19,7 +19,9 @@ end
 Check every function docstring in `mod` against the schema.
 
 Types, constants and modules are skipped, as are bindings listed in
-`config.exclude`.
+`config.exclude`. Bindings listed in `config.no_check`, and non-exported
+functions when `config.skip_unexported` is set, are skipped too, but stay
+styled when rendered with a theme.
 
 # Arguments
 - `mod::Module`: the module whose docstrings to check.
@@ -47,6 +49,7 @@ function check_module(mod::Module; config::SchemaConfig = SchemaConfig())
         f = Base.Docs.resolve(binding)
         f isa Function || continue
         is_excluded(config, binding, f) && continue
+        is_no_check(config, binding, f) && continue
         for (sig, ds) in multidoc.docs
             append!(problems, check_docstring(ds, binding, sig; config))
         end
@@ -56,6 +59,13 @@ function check_module(mod::Module; config::SchemaConfig = SchemaConfig())
 end
 
 is_excluded(config, binding, f) = any(e -> isequal(e, binding) || e === f, config.exclude)
+
+function is_no_check(config, binding, f)
+    (config.skip_unexported && !is_exported(binding)) && return true
+    return any(e -> isequal(e, binding) || e === f, config.no_check)
+end
+
+is_exported(binding) = binding.var in names(binding.mod)
 
 """
     check_docstring(ds::Base.Docs.DocStr, binding, sig; config::SchemaConfig = SchemaConfig()) -> Vector{Problem}
@@ -102,8 +112,9 @@ function check_docstring(ds::Base.Docs.DocStr, binding, sig; config::SchemaConfi
 
     minimal = any(x -> x isa Minimal, ds.text)
     noschema = any(x -> x isa NoSchema, ds.text)
+    nocheck = any(x -> x isa NoCheck, ds.text)
     minimal && noschema && report!(ctx, :DS050, "both MINIMAL and NOSCHEMA present, using NOSCHEMA")
-    noschema && return ctx.problems
+    (noschema || nocheck) && return ctx.problems
 
     pre, secs = split_sections(flatten(Base.Docs.parsedoc(ds)))
     rule_header!(ctx, pre)

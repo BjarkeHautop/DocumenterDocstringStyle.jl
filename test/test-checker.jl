@@ -40,6 +40,10 @@ end
     @test isempty(Fixtures.codes(:skipped))
 end
 
+@testitem "NOCHECK skips checks" tags = [:unit, :fast] setup = [Fixtures] begin
+    @test isempty(Fixtures.codes(:uncheckable))
+end
+
 @testitem "Bad conv2d reports the expected problems" tags = [:unit, :fast] setup = [Fixtures] begin
     @test Fixtures.codes(:conv2d; problems = Fixtures.BAD) ==
         sort([:DS002, :DS010, :DS020, :DS020, :DS030, :DS031, :DS032])
@@ -93,4 +97,35 @@ end
     @test startswith(report, "DocumenterDocstringStyle: 7 problem(s)\n  ")
     @test occursin("FixturePkg.jl:", report)
     @test occursin("\n    DS030 `# Arguments` misses: w", report)
+end
+
+@testitem "Config no_check and skip_unexported" tags = [:unit, :fast] begin
+    using DocumenterDocstringStyle
+    module SkipDemo
+    export exported_fn
+    """
+        exported_fn(x)
+
+    Public helper with a broken schema.
+    """
+    exported_fn(x) = x
+    """
+        internal_fn(x)
+
+    Private helper with a broken schema too.
+    """
+    internal_fn(x) = x
+    end
+
+    baseline = check_module(SkipDemo)
+    @test any(p -> p.binding.var === :exported_fn, baseline)
+    @test any(p -> p.binding.var === :internal_fn, baseline)
+
+    no_checked = check_module(SkipDemo; config = SchemaConfig(no_check = Any[SkipDemo.internal_fn]))
+    @test any(p -> p.binding.var === :exported_fn, no_checked)
+    @test !any(p -> p.binding.var === :internal_fn, no_checked)
+
+    unexported = check_module(SkipDemo; config = SchemaConfig(skip_unexported = true))
+    @test any(p -> p.binding.var === :exported_fn, unexported)
+    @test !any(p -> p.binding.var === :internal_fn, unexported)
 end

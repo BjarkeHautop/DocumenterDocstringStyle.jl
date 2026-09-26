@@ -54,11 +54,16 @@ Every opt-out is explicit and visible in the source.
 | Level | How | Effect |
 | :--- | :--- | :--- |
 | Section | Write `N/A` as the whole body of a section | The section counts as present |
-| Docstring | Interpolate `$(MINIMAL)`, usually on the last line | Only the signature and summary are checked |
-| Docstring | Interpolate `$(NOSCHEMA)` | Nothing is checked |
-| Build | `SchemaConfig(exclude = [MyPkg.f])` | The listed functions are skipped |
+| Docstring | Interpolate `$(MINIMAL)`, usually on the last line | Only the signature and summary are checked; not styled |
+| Docstring | Interpolate `$(NOSCHEMA)` | Nothing is checked; not styled |
+| Docstring | Interpolate `$(NOCHECK)` | Nothing is checked; still styled |
+| Build | `SchemaConfig(exclude = [MyPkg.f])` | The listed functions are skipped entirely, checks and styling alike |
+| Build | `SchemaConfig(no_check = [MyPkg.f])` | The listed functions skip checks, but are still styled |
+| Build | `SchemaConfig(skip_unexported = true)` | Every non-exported function skips checks, but is still styled |
 
-The markers render as nothing, in the REPL and in HTML. Import them with `using DocumenterDocstringStyleMarkers: MINIMAL, NOSCHEMA`. `NOSCHEMA` wins over `MINIMAL`, and `exclude` wins over both.
+The markers render as nothing, in the REPL and in HTML. Import them with `using DocumenterDocstringStyleMarkers: MINIMAL, NOSCHEMA, NOCHECK`. `NOSCHEMA` wins over `MINIMAL`, and `exclude` wins over everything else.
+
+Use `$(NOCHECK)`, `no_check` or `skip_unexported` for docstrings you want rendered with the configured theme but don't want held to the schema, for example Makie recipes or other non-exported helpers that already follow the section layout loosely.
 
 ## Rules
 

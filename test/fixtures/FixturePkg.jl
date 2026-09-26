@@ -3,7 +3,7 @@
 # verbatim from the design's `conv2d_example.jl`.
 module FixturePkg
 
-    using DocumenterDocstringStyle: MINIMAL, NOSCHEMA
+    using DocumenterDocstringStyle: MINIMAL, NOSCHEMA, NOCHECK
     using DocStringExtensions: TYPEDSIGNATURES
 
     """
@@ -94,6 +94,25 @@ module FixturePkg
     $(NOSCHEMA)
     """
     skipped(x) = x
+
+    # NOCHECK: nothing is checked, but the sections still render.
+    """
+        uncheckable(x) -> Int
+
+    Return one, ignoring an undocumented argument.
+
+    $(NOCHECK)
+
+    # Returns
+    One.
+
+    # Examples
+    ```jldoctest
+    julia> uncheckable(1)
+    1
+    ```
+    """
+    uncheckable(x) = 1
 
     """
         splat(xs...; kw...) -> Int

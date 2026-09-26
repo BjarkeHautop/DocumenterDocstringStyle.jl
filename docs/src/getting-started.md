@@ -18,7 +18,7 @@ Pkg.add(; url, subdir = "DocumenterDocstringStyleMarkers")
 Pkg.add(; url)
 ```
 
-Add both to your `docs/Project.toml` environment. If your package uses the `MINIMAL` or `NOSCHEMA` markers in its own source, it needs `DocumenterDocstringStyleMarkers` as a dependency too. That package has no dependencies of its own.
+Add both to your `docs/Project.toml` environment. If your package uses the `MINIMAL`, `NOSCHEMA` or `NOCHECK` markers in its own source, it needs `DocumenterDocstringStyleMarkers` as a dependency too. That package has no dependencies of its own.
 
 ## Check and style your docs
 

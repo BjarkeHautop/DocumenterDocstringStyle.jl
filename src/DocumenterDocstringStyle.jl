@@ -5,13 +5,13 @@ and renders them in a structured layout.
 module DocumenterDocstringStyle
 
 using Documenter: Documenter
-using DocumenterDocstringStyleMarkers: MINIMAL, Minimal, NOSCHEMA, NoSchema
+using DocumenterDocstringStyleMarkers: MINIMAL, Minimal, NOSCHEMA, NoSchema, NOCHECK, NoCheck
 using Logging: Logging
 using Markdown: Markdown
 using MarkdownAST: MarkdownAST
 using TOML: TOML
 
-export MINIMAL, NOSCHEMA
+export MINIMAL, NOSCHEMA, NOCHECK
 export Problem, SchemaConfig, check_docstring, check_module
 export DocstringTheme, ThemeSpec, register_theme!
 
